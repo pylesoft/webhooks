@@ -2,7 +2,15 @@
 
 **Turn your Laravel Events into webhooks. Zero code changes.**
 
-Register events in config → they're automatically webhook-enabled. Queued delivery, per-endpoint secrets, Livewire UI.
+Register your events in config and they're automatically webhook-enabled. Beautiful UI, secure signatures, queued delivery.
+
+## Why Use This Package?
+
+-   **Use your existing Laravel Events** - Just like Broadcasting, register your current events in the config and they automatically become webhook-enabled. No need to modify or create new event classes
+-   **Sync data to third-party services** when orders are created, payments are processed, or users register
+-   **Notify partners and integrations** in real-time without polling
+-   **Build event-driven architectures** where your Laravel app triggers actions in other systems
+-   **Manage webhooks visually** through a built-in admin interface
 
 ## Installation
 
