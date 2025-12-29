@@ -1,4 +1,4 @@
-# Webhooks
+# Laravel Webhooks
 
 **Turn your Laravel Events into webhooks. Zero code changes.**
 
