@@ -1,0 +1,68 @@
+{
+    "name": "pylesoft/webhooks",
+    "description": "",
+    "license": "MIT",
+    "homepage": "https://github.com/pylesoft/webhooks",
+    "keywords": [
+        "Laravel",
+        "Webhooks"
+    ],
+    "require": {
+        "php": "^8.3",
+        "illuminate/contracts": "^12.0",
+        "livewire/livewire": "^3.4",
+        "lorisleiva/laravel-actions": "^2.7",
+        "lorisleiva/lody": "^0.6.0",
+        "spatie/laravel-webhook-server": "^3.8"
+    },
+    "require-dev": {
+        "driftingly/rector-laravel": "2.0.7",
+        "larastan/larastan": "^3.6",
+        "laravel/pint": "^1.23",
+        "nunomaduro/collision": "^8.1.1||^7.10.0",
+        "nunomaduro/phpinsights": "^2.13",
+        "orchestra/testbench": "^10.0",
+        "pestphp/pest": "^3.0",
+        "pestphp/pest-plugin-arch": "^3.0",
+        "pestphp/pest-plugin-laravel": "^3.0",
+        "rector/rector": "2.2.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pyle\\Webhooks\\": "src/",
+            "Pyle\\Webhooks\\Database\\Factories\\": "database/factories/",
+            "Pyle\\Webhooks\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Pyle\\Webhooks\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "analyse": "vendor/bin/phpstan analyse --memory-limit=2G",
+        "analyse-baseline": "vendor/bin/phpstan analyse --generate-baseline --memory-limit=2G",
+        "rector-dry": "vendor/bin/rector process --dry-run",
+        "rector-fix": "vendor/bin/rector process",
+        "test": "vendor/bin/pest --parallel",
+        "test:unit": "vendor/bin/pest --group=unit --parallel"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Pyle\\Webhooks\\WebhooksServiceProvider"
+            ],
+            "aliases": {
+                "Webhooks": "Pyle\\Webhooks\\Facades\\Webhooks"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
+}

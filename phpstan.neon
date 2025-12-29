@@ -1,0 +1,36 @@
+includes:
+    - vendor/nesbot/carbon/extension.neon
+
+parameters:
+    paths:
+        - src/
+
+    # Level 1 checks for possibly undefined variables and unknown magic methods/properties
+    level: 1
+
+    # Only ignore patterns that are actually needed
+    ignoreErrors:
+        # Framework helper functions
+        - '#Function module_path not found#'
+        
+        # Property access on models and components (Laravel dynamic properties)
+        - '#Access to an undefined property .*Livewire\\.*::\$.*#'
+        
+        # External package issues
+        - '#Class .* not found#'
+        - '#Instantiated class .* not found#'
+        - '#Call to static method .* on an unknown class .*#'
+        - '#Call to an undefined static method .*#'
+
+    # Disable some strict checks to focus on native PHP types
+    polluteScopeWithLoopInitialAssignments: false
+    polluteScopeWithAlwaysIterableForeach: false
+    
+    # Focus on native PHP types instead of PHPDoc
+    treatPhpDocTypesAsCertain: false
+    
+    # Memory limit for analysis
+    tmpDir: build/phpstan
+    
+    # Exclude problematic files that reference App classes or have persistent issues
+    excludePaths:

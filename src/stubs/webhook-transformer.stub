@@ -1,0 +1,26 @@
+<?php
+
+namespace {{ namespace }};
+
+use Pyle\Webhooks\Contracts\WebhookPayloadTransformer;
+{{ eventTypeDoc }}
+class {{ class }} implements WebhookPayloadTransformer
+{
+    /**
+     * Transform the event into a webhook payload array.
+     *
+     * @param {{ eventType }} $event
+     * @return array<string, mixed>
+     */
+    public function transform(object $event): array
+    {
+        return [
+            // TODO: Transform the event into your desired webhook payload structure
+            'type' => '{{ eventTypeName }}',
+            'data' => [
+                // Add your payload fields here
+            ],
+        ];
+    }
+}
+
