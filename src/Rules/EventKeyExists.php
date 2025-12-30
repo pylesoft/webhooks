@@ -1,11 +1,11 @@
 <?php
 
-namespace Pyle\Webhooks\Validation;
+namespace Pyle\Webhooks\Rules;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Pyle\Webhooks\EventCatalog;
 
-class ValidWebhookEventKey implements ValidationRule
+class EventKeyExists implements ValidationRule
 {
     public function __construct(
         protected EventCatalog $catalog
@@ -29,3 +29,4 @@ class ValidWebhookEventKey implements ValidationRule
         }
     }
 }
+

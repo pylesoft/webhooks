@@ -1,11 +1,10 @@
 <?php
 
-namespace Pyle\Webhooks\Payload;
+namespace Pyle\Webhooks;
 
 use DateTimeInterface;
 use Illuminate\Contracts\Support\Arrayable;
 use Pyle\Webhooks\Contracts\WebhookPayloadTransformer;
-use Pyle\Webhooks\EventCatalog;
 
 class PayloadBuilder
 {
@@ -153,3 +152,4 @@ class PayloadBuilder
         ];
     }
 }
+

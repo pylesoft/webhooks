@@ -2,7 +2,6 @@
 
 namespace Pyle\Webhooks\Livewire;
 
-use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Pyle\Webhooks\EventCatalog;
@@ -22,6 +21,55 @@ class WebhookEndpointForm extends Component
     public array $selectedEventKeys = [];
 
     public string $eventSearch = '';
+
+    protected EventCatalog $catalog;
+
+    public function boot(EventCatalog $catalog): void
+    {
+        $this->catalog = $catalog;
+    }
+
+    /**
+     * Map manager rules to Livewire field names.
+     *
+     * @return array<string, mixed>
+     */
+    protected function rules(): array
+    {
+        $mapped = [];
+
+        foreach (Webhooks::endpoints()->rules() as $key => $rule) {
+            $livewireKey = match ($key) {
+                'events' => 'selectedEventKeys',
+                'events.*' => 'selectedEventKeys.*',
+                default => $key,
+            };
+
+            $mapped[$livewireKey] = $rule;
+        }
+
+        return $mapped;
+    }
+
+    /**
+     * Map manager messages to Livewire field names.
+     *
+     * @return array<string, string>
+     */
+    protected function messages(): array
+    {
+        $mapped = [];
+
+        foreach (Webhooks::endpoints()->messages() as $key => $message) {
+            if (str_starts_with($key, 'events.')) {
+                $mapped[str_replace('events.', 'selectedEventKeys.', $key)] = $message;
+            } else {
+                $mapped[$key] = $message;
+            }
+        }
+
+        return $mapped;
+    }
 
     #[On('prepareCreate')]
     public function prepareCreate(): void
@@ -45,49 +93,33 @@ class WebhookEndpointForm extends Component
 
     public function save(): void
     {
-        $input = [
-            'url' => $this->url,
-            'description' => $this->description,
-            'enabled' => $this->enabled,
-            'events' => $this->selectedEventKeys,
-        ];
+        // Pre-validate event keys exist in catalog (provides clear base-key error for tests/UI)
+        foreach ($this->selectedEventKeys as $eventKey) {
+            if (!$this->catalog->has($eventKey)) {
+                $this->addError('selectedEventKeys', "Event key '{$eventKey}' is not configured.");
 
-        try {
-            $validated = Webhooks::endpoints()->validate($input);
-        }
-        catch (ValidationException $exception) {
-            if ($exception->validator) {
-                $errors = $exception->validator->errors();
-
-                foreach ($errors->getMessages() as $key => $messages) {
-                    if (str_starts_with($key, 'events')) {
-                        foreach ($messages as $message) {
-                            $errors->add('selectedEventKeys', $message);
-                        }
-                    }
-                }
+                return;
             }
-
-            throw $exception;
         }
 
-        $events = $validated['events'] ?? [];
+        // Validate remaining fields via Livewire (rules() handles key mapping)
+        $this->validate();
 
+        // Persist via manager
         if ($this->endpointId) {
             $endpoint = Webhooks::endpoints()->update(
                 endpoint: $this->endpointId,
-                url: $validated['url'],
-                events: $events,
-                description: $validated['description'] ?? null,
-                enabled: $validated['enabled'] ?? null
+                url: $this->url,
+                events: $this->selectedEventKeys,
+                description: $this->description,
+                enabled: $this->enabled
             );
-        }
-        else {
+        } else {
             $endpoint = Webhooks::endpoints()->create(
-                url: $validated['url'],
-                events: $events,
-                description: $validated['description'] ?? null,
-                enabled: $validated['enabled'] ?? true
+                url: $this->url,
+                events: $this->selectedEventKeys,
+                description: $this->description,
+                enabled: $this->enabled
             );
         }
 
@@ -99,17 +131,15 @@ class WebhookEndpointForm extends Component
 
     public function selectAllEvents(): void
     {
-        $catalog = app(EventCatalog::class);
-        $this->selectedEventKeys = array_keys($catalog->all());
+        $this->selectedEventKeys = array_keys($this->catalog->all());
     }
 
     public function selectGroup(string $group): void
     {
-        $catalog = app(EventCatalog::class);
         $groupEvents = [];
 
-        foreach ($catalog->all() as $eventKey => $config) {
-            $metadata = $catalog->getMetadata($eventKey);
+        foreach ($this->catalog->all() as $eventKey => $config) {
+            $metadata = $this->catalog->getMetadata($eventKey);
             if ($metadata['group'] === $group) {
                 $groupEvents[] = $eventKey;
             }
@@ -132,8 +162,7 @@ class WebhookEndpointForm extends Component
 
     protected function getFilteredEvents(): array
     {
-        $catalog = app(EventCatalog::class);
-        $allEvents = $catalog->all();
+        $allEvents = $this->catalog->all();
 
         if (empty($this->eventSearch)) {
             return $allEvents;
@@ -143,7 +172,7 @@ class WebhookEndpointForm extends Component
         $filtered = [];
 
         foreach ($allEvents as $eventKey => $config) {
-            $metadata = $catalog->getMetadata($eventKey);
+            $metadata = $this->catalog->getMetadata($eventKey);
             $searchable = strtolower($eventKey . ' ' . $metadata['label'] . ' ' . ($metadata['description'] ?? '') . ' ' . $metadata['group']);
 
             if (str_contains($searchable, $search)) {
@@ -156,12 +185,11 @@ class WebhookEndpointForm extends Component
 
     protected function getGroupedEvents(): array
     {
-        $catalog = app(EventCatalog::class);
         $filtered = $this->getFilteredEvents();
         $grouped = [];
 
         foreach ($filtered as $eventKey => $config) {
-            $metadata = $catalog->getMetadata($eventKey);
+            $metadata = $this->catalog->getMetadata($eventKey);
             $group = $metadata['group'];
 
             if (!isset($grouped[$group])) {

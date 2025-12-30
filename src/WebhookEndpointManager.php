@@ -1,14 +1,13 @@
 <?php
 
-namespace Pyle\Webhooks\Endpoints;
+namespace Pyle\Webhooks;
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use Pyle\Webhooks\EventCatalog;
 use Pyle\Webhooks\Models\WebhookEndpoint;
-use Pyle\Webhooks\Validation\ValidWebhookEventKey;
+use Pyle\Webhooks\Rules\EventKeyExists;
 
-class WebhookEndpoints
+class WebhookEndpointManager
 {
     public function __construct(
         protected EventCatalog $catalog
@@ -26,7 +25,7 @@ class WebhookEndpoints
             'description' => ['nullable', 'string', 'max:255'],
             'enabled' => ['boolean'],
             'events' => ['array'],
-            'events.*' => ['string', new ValidWebhookEventKey($this->catalog)],
+            'events.*' => ['string', new EventKeyExists($this->catalog)],
         ];
     }
 
@@ -182,6 +181,49 @@ class WebhookEndpoints
     }
 
     /**
+     * Test a webhook endpoint by sending a test payload.
+     *
+     * @return array{variant: string, heading: string, message: string}
+     */
+    public function test(WebhookEndpoint|int $endpoint): array
+    {
+        if (is_int($endpoint)) {
+            $endpoint = WebhookEndpoint::findOrFail($endpoint);
+        }
+
+        try {
+            $payloadBuilder = app(PayloadBuilder::class);
+            $payload = $payloadBuilder->buildFromEvent('webhooks.test', null, [
+                'message' => 'This is a test webhook payload',
+                'timestamp' => now()->toIso8601String(),
+            ], [
+                'test' => true,
+            ]);
+
+            \Spatie\WebhookServer\WebhookCall::create()
+                ->url($endpoint->url)
+                ->payload($payload)
+                ->useSecret($endpoint->secret)
+                ->maximumTries(1)
+                ->throwExceptionOnFailure()
+                ->dispatchSync();
+
+            return [
+                'variant' => 'success',
+                'heading' => 'Test webhook sent successfully',
+                'message' => "Webhook was successfully delivered to {$endpoint->url}",
+            ];
+        }
+        catch (\Exception $e) {
+            return [
+                'variant' => 'danger',
+                'heading' => 'Test webhook failed',
+                'message' => "Failed to deliver webhook to {$endpoint->url}: {$e->getMessage()}",
+            ];
+        }
+    }
+
+    /**
      * Sync event subscriptions for an endpoint.
      *
      * @param  array<string>  $eventKeys
@@ -195,3 +237,4 @@ class WebhookEndpoints
         }
     }
 }
+

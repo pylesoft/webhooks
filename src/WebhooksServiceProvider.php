@@ -6,11 +6,9 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 use Pyle\Webhooks\Console\Commands\MakeWebhookTransformerCommand;
-use Pyle\Webhooks\Endpoints\WebhookEndpoints;
 use Pyle\Webhooks\Listeners\DispatchWebhookListener;
 use Pyle\Webhooks\Livewire\WebhookEndpointForm;
 use Pyle\Webhooks\Livewire\WebhooksPage;
-use Pyle\Webhooks\Payload\PayloadBuilder;
 
 class WebhooksServiceProvider extends ServiceProvider
 {
@@ -63,13 +61,13 @@ class WebhooksServiceProvider extends ServiceProvider
         $this->app->singleton(EventCatalog::class);
         $this->app->singleton(PayloadBuilder::class);
         $this->app->singleton(WebhookDispatcher::class);
-        $this->app->singleton(WebhookEndpoints::class);
+        $this->app->singleton(WebhookEndpointManager::class);
 
         // Register the service the package provides.
         $this->app->singleton('webhooks', function ($app) {
             return new Webhooks(
                 $app->make(WebhookDispatcher::class),
-                $app->make(WebhookEndpoints::class)
+                $app->make(WebhookEndpointManager::class)
             );
         });
     }
@@ -93,9 +91,9 @@ class WebhooksServiceProvider extends ServiceProvider
     /**
      * Get the services provided by the provider.
      *
-     * @return array
+     * @return array<int, string>
      */
-    public function provides()
+    public function provides(): array
     {
         return ['webhooks'];
     }
@@ -109,21 +107,6 @@ class WebhooksServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../config/webhooks.php' => config_path('webhooks.php'),
         ], 'webhooks.config');
-
-        // Publishing the views.
-        /*$this->publishes([
-            __DIR__.'/../resources/views' => base_path('resources/views/vendor/pylesoft'),
-        ], 'webhooks.views');*/
-
-        // Publishing assets.
-        /*$this->publishes([
-            __DIR__.'/../resources/assets' => public_path('vendor/pylesoft'),
-        ], 'webhooks.assets');*/
-
-        // Publishing the translation files.
-        /*$this->publishes([
-            __DIR__.'/../resources/lang' => resource_path('lang/vendor/pylesoft'),
-        ], 'webhooks.lang');*/
 
         // Registering package commands.
         $this->commands([

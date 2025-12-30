@@ -191,6 +191,55 @@ Webhooks::dispatch('orders.created', [
 ]);
 ```
 
+## Programmatic Endpoint Management
+
+Manage webhook endpoints programmatically using the `WebhookEndpoints` manager:
+
+### Creating an Endpoint
+
+```php
+use Pyle\Webhooks\Facades\Webhooks;
+
+$endpoint = Webhooks::endpoints()->create(
+    url: 'https://api.example.com/webhook',
+    events: ['orders.created', 'users.registered'],
+    description: 'Production sync endpoint',
+    enabled: true
+);
+```
+
+### Updating an Endpoint
+
+Update specific fields (partial updates supported):
+
+```php
+// Update URL only
+Webhooks::endpoints()->update($endpointId, url: 'https://new-url.com/webhook');
+
+// Update multiple fields
+Webhooks::endpoints()->update(
+    endpoint: $endpointId,
+    url: 'https://new-url.com/webhook',
+    events: ['orders.created', 'orders.updated'],
+    description: 'Updated description',
+    enabled: false
+);
+```
+
+### Deleting an Endpoint
+
+```php
+Webhooks::endpoints()->delete($endpointId);
+```
+
+### Validation
+
+The manager validates all input automatically:
+
+-   URLs must be valid and start with `https://`
+-   Event keys must exist in your webhook catalog
+-   Descriptions are optional but limited to 255 characters
+
 ## Signature Verification
 
 Webhooks are signed with HMAC SHA256. Each endpoint has its own secret (viewable in the UI).

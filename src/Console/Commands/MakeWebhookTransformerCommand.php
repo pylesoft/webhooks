@@ -72,7 +72,7 @@ class MakeWebhookTransformerCommand extends Command
         $eventTypeName = $event ? class_basename($event) : 'event';
 
         // Read and replace stub
-        $stub = $files->get(__DIR__ . '/../../stubs/webhook-transformer.stub');
+        $stub = $files->get(__DIR__ . '/../../../resources/stubs/webhook-transformer.stub');
         $stub = str_replace('{{ namespace }}', $namespace, $stub);
         $stub = str_replace('{{ class }}', $className, $stub);
         $stub = str_replace('{{ eventType }}', $eventType, $stub);

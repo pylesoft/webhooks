@@ -7,8 +7,6 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Pyle\Webhooks\Facades\Webhooks;
 use Pyle\Webhooks\Models\WebhookEndpoint;
-use Pyle\Webhooks\Payload\PayloadBuilder;
-use Spatie\WebhookServer\WebhookCall;
 
 class WebhooksPage extends Component
 {
@@ -56,40 +54,11 @@ class WebhooksPage extends Component
 
     public function testEndpoint(int $id): void
     {
-        $endpoint = WebhookEndpoint::findOrFail($id);
+        $result = Webhooks::endpoints()->test($id);
 
-        try {
-            $payloadBuilder = app(PayloadBuilder::class);
-            $payload = $payloadBuilder->buildFromEvent('webhooks.test', null, [
-                'message' => 'This is a test webhook payload',
-                'timestamp' => now()->toIso8601String(),
-            ], [
-                'test' => true,
-            ]);
-
-            WebhookCall::create()
-                ->url($endpoint->url)
-                ->payload($payload)
-                ->useSecret($endpoint->secret)
-                ->maximumTries(1)
-                ->throwExceptionOnFailure()
-                ->dispatchSync();
-
-            $this->lastTestResult = [
-                'endpoint_id' => $endpoint->id,
-                'variant' => 'success',
-                'heading' => 'Test webhook sent successfully',
-                'message' => "Webhook was successfully delivered to {$endpoint->url}",
-            ];
-        }
-        catch (\Exception $e) {
-            $this->lastTestResult = [
-                'endpoint_id' => $endpoint->id,
-                'variant' => 'danger',
-                'heading' => 'Test webhook failed',
-                'message' => "Failed to deliver webhook to {$endpoint->url}: {$e->getMessage()}",
-            ];
-        }
+        $this->lastTestResult = array_merge([
+            'endpoint_id' => $id,
+        ], $result);
     }
 
     public function sort(string $column): void

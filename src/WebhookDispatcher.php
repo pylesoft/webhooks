@@ -4,7 +4,6 @@ namespace Pyle\Webhooks;
 
 use Illuminate\Support\Facades\Log;
 use Pyle\Webhooks\Models\WebhookEndpoint;
-use Pyle\Webhooks\Payload\PayloadBuilder;
 use Spatie\WebhookServer\WebhookCall;
 
 class WebhookDispatcher
