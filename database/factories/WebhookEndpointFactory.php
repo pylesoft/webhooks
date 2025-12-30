@@ -25,7 +25,7 @@ class WebhookEndpointFactory extends Factory
     public function definition(): array
     {
         return [
-            'url' => fake()->url(),
+            'url' => 'https://' . fake()->domainName() . '/webhook',
             'description' => fake()->optional()->sentence(),
             'enabled' => true,
             'secret' => WebhookEndpoint::generateSecret(),

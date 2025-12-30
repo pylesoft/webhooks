@@ -2,9 +2,11 @@
 
 namespace Pyle\Webhooks\Livewire;
 
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Pyle\Webhooks\EventCatalog;
+use Pyle\Webhooks\Facades\Webhooks;
 use Pyle\Webhooks\Models\WebhookEndpoint;
 
 class WebhookEndpointForm extends Component
@@ -43,43 +45,50 @@ class WebhookEndpointForm extends Component
 
     public function save(): void
     {
-        $validated = $this->validate([
-            'url' => ['required', 'url', 'starts_with:https://'],
-            'description' => ['nullable', 'string', 'max:255'],
-            'enabled' => ['boolean'],
-            'selectedEventKeys' => ['array'],
-            'selectedEventKeys.*' => ['string'],
-        ]);
+        $input = [
+            'url' => $this->url,
+            'description' => $this->description,
+            'enabled' => $this->enabled,
+            'events' => $this->selectedEventKeys,
+        ];
 
-        // Validate that all selected event keys exist in catalog
-        $catalog = app(EventCatalog::class);
-        foreach ($validated['selectedEventKeys'] as $eventKey) {
-            if (!$catalog->has($eventKey)) {
-                $this->addError('selectedEventKeys', "Event key '{$eventKey}' is not configured.");
-
-                return;
-            }
+        try {
+            $validated = Webhooks::endpoints()->validate($input);
         }
+        catch (ValidationException $exception) {
+            if ($exception->validator) {
+                $errors = $exception->validator->errors();
+
+                foreach ($errors->getMessages() as $key => $messages) {
+                    if (str_starts_with($key, 'events')) {
+                        foreach ($messages as $message) {
+                            $errors->add('selectedEventKeys', $message);
+                        }
+                    }
+                }
+            }
+
+            throw $exception;
+        }
+
+        $events = $validated['events'] ?? [];
 
         if ($this->endpointId) {
-            $endpoint = WebhookEndpoint::findOrFail($this->endpointId);
-            $endpoint->update([
-                'url' => $validated['url'],
-                'description' => $validated['description'],
-                'enabled' => $validated['enabled'],
-            ]);
-        } else {
-            $endpoint = WebhookEndpoint::create([
-                'url' => $validated['url'],
-                'description' => $validated['description'],
-                'enabled' => $validated['enabled'],
-            ]);
+            $endpoint = Webhooks::endpoints()->update(
+                endpoint: $this->endpointId,
+                url: $validated['url'],
+                events: $events,
+                description: $validated['description'] ?? null,
+                enabled: $validated['enabled'] ?? null
+            );
         }
-
-        // Sync subscriptions
-        $endpoint->subscriptions()->delete();
-        foreach ($validated['selectedEventKeys'] as $eventKey) {
-            $endpoint->subscriptions()->create(['event_key' => $eventKey]);
+        else {
+            $endpoint = Webhooks::endpoints()->create(
+                url: $validated['url'],
+                events: $events,
+                description: $validated['description'] ?? null,
+                enabled: $validated['enabled'] ?? true
+            );
         }
 
         $this->resetForm();

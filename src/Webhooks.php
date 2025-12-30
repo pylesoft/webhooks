@@ -2,10 +2,13 @@
 
 namespace Pyle\Webhooks;
 
+use Pyle\Webhooks\Endpoints\WebhookEndpoints;
+
 class Webhooks
 {
     public function __construct(
-        protected WebhookDispatcher $dispatcher
+        protected WebhookDispatcher $dispatcher,
+        protected WebhookEndpoints $endpoints
     ) {}
 
     /**
@@ -17,5 +20,13 @@ class Webhooks
     public function dispatch(string $eventKey, ?array $data = null, array $meta = []): void
     {
         $this->dispatcher->dispatch($eventKey, null, $data, $meta);
+    }
+
+    /**
+     * Get the webhook endpoints manager.
+     */
+    public function endpoints(): WebhookEndpoints
+    {
+        return $this->endpoints;
     }
 }

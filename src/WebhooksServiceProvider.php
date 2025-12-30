@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 use Pyle\Webhooks\Console\Commands\MakeWebhookTransformerCommand;
+use Pyle\Webhooks\Endpoints\WebhookEndpoints;
 use Pyle\Webhooks\Listeners\DispatchWebhookListener;
 use Pyle\Webhooks\Livewire\WebhookEndpointForm;
 use Pyle\Webhooks\Livewire\WebhooksPage;
@@ -62,10 +63,14 @@ class WebhooksServiceProvider extends ServiceProvider
         $this->app->singleton(EventCatalog::class);
         $this->app->singleton(PayloadBuilder::class);
         $this->app->singleton(WebhookDispatcher::class);
+        $this->app->singleton(WebhookEndpoints::class);
 
         // Register the service the package provides.
         $this->app->singleton('webhooks', function ($app) {
-            return new Webhooks($app->make(WebhookDispatcher::class));
+            return new Webhooks(
+                $app->make(WebhookDispatcher::class),
+                $app->make(WebhookEndpoints::class)
+            );
         });
     }
 

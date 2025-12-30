@@ -5,6 +5,7 @@ namespace Pyle\Webhooks\Livewire;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Pyle\Webhooks\Facades\Webhooks;
 use Pyle\Webhooks\Models\WebhookEndpoint;
 use Pyle\Webhooks\Payload\PayloadBuilder;
 use Spatie\WebhookServer\WebhookCall;
@@ -45,7 +46,7 @@ class WebhooksPage extends Component
 
     public function deleteEndpoint(int $id): void
     {
-        WebhookEndpoint::findOrFail($id)->delete();
+        Webhooks::endpoints()->delete($id);
     }
 
     public function toggleRevealSecret(int $id): void
@@ -95,7 +96,8 @@ class WebhooksPage extends Component
     {
         if ($this->sortBy === $column) {
             $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
+        }
+        else {
             $this->sortBy = $column;
             $this->sortDirection = 'asc';
         }
