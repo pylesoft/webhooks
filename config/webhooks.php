@@ -55,6 +55,11 @@ return [
          * Middleware to apply to the webhooks UI routes.
          */
         'middleware' => ['web', 'auth'],
+
+        /*
+         * The layout to use for the webhooks UI.
+         */
+        'layout' => env('WEBHOOKS_UI_LAYOUT', 'components.layouts.app'),
     ],
 
     /*

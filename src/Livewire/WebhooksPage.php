@@ -65,8 +65,7 @@ class WebhooksPage extends Component
     {
         if ($this->sortBy === $column) {
             $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-        }
-        else {
+        } else {
             $this->sortBy = $column;
             $this->sortDirection = 'asc';
         }
@@ -83,6 +82,6 @@ class WebhooksPage extends Component
 
         return view('pyle-webhooks::livewire.webhooks-page', [
             'endpoints' => $endpoints,
-        ]);
+        ])->layout(config('webhooks.ui.layout', 'components.layouts.app'));
     }
 }
