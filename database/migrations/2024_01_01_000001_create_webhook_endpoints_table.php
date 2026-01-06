@@ -11,6 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('webhook_endpoints')) {
+            return;
+        }
         Schema::create('webhook_endpoints', function (Blueprint $table) {
             $table->id();
             $table->string('url');
