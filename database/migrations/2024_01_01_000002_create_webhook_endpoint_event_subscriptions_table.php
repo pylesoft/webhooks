@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('event_key');
             $table->timestamps();
 
-            $table->unique(['webhook_endpoint_id', 'event_key'], 'webhook_endpoint_event_subscription_unique');
+            $table->unique(['webhook_endpoint_id', 'event_key'], 'webhook_endpoint_event_unique');
             $table->index('event_key');
         });
     }
