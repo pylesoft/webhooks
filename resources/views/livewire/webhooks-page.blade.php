@@ -142,7 +142,7 @@
 
         {{-- Create/Edit Modal --}}
         <flux:modal name="webhook-endpoint" class="w-2xl max-w-full" @close="prepareCreateModal">
-            <livewire:pyle::webhook-endpoint-form />
+            <livewire:webhook-endpoint-form />
         </flux:modal>
     </div>
 </main>

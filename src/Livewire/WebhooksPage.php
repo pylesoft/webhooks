@@ -26,12 +26,12 @@ class WebhooksPage extends Component
 
     public function prepareCreateModal(): void
     {
-        $this->dispatch('prepareCreate')->to('pyle::webhook-endpoint-form');
+        $this->dispatch('prepareCreate')->to(WebhookEndpointForm::class);
     }
 
     public function openEditModal(int $id): void
     {
-        $this->dispatch('prepareEdit', id: $id)->to('pyle::webhook-endpoint-form');
+        $this->dispatch('prepareEdit', id: $id)->to(WebhookEndpointForm::class);
         $this->modal('webhook-endpoint')->show();
     }
 
