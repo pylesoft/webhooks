@@ -25,7 +25,7 @@ class WebhooksServiceProvider extends ServiceProvider
             config(['webhook-server' => array_replace_recursive($currentConfig, $overrides)]);
         }
 
-        // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'webhooks');
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'webhooks');
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'pyle-webhooks');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 

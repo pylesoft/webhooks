@@ -12,6 +12,8 @@ class WebhooksPage extends Component
 {
     use WithPagination;
 
+    public bool $embedded = false;
+
     public int $perPage = 10;
 
     public string $sortBy = 'created_at';
@@ -27,6 +29,13 @@ class WebhooksPage extends Component
     public function prepareCreateModal(): void
     {
         $this->dispatch('prepareCreate')->to(WebhookEndpointForm::class);
+    }
+
+    #[On('open-webhook-endpoint-create')]
+    public function openCreateModal(): void
+    {
+        $this->prepareCreateModal();
+        $this->modal('webhook-endpoint')->show();
     }
 
     public function openEditModal(int $id): void

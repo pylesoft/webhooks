@@ -1,41 +1,36 @@
-<main class="lg:col-span-10">
-    <div class="overflow-hidden bg-white border rounded-lg shadow-2xs border-neutral-200">
+<div class="overflow-hidden bg-white border rounded-lg shadow-2xs border-neutral-200">
+    @unless($embedded)
         <div class="space-y-1 border-b py-0.5">
             <div class="flex items-center justify-between px-4 py-3 space-x-4">
                 <div class="flex items-center flex-1 space-x-3 text-neutral-900">
                     <div class="flex flex-col py-0.5">
                         <h5 class="text-base font-bold">
-                            Webhooks
+                            {{ __('webhooks::page.title') }}
                         </h5>
-                        <p class="mt-1 text-sm text-gray-500">Manage the endpoints that receive real-time event notifications from your application.</p>
+                        <p class="mt-1 text-sm text-gray-500">
+                            {{ __('webhooks::page.description') }}
+                        </p>
                     </div>
                 </div>
                 <div class="flex flex-row items-center justify-end shrink-0 space-x-3">
-                    <flux:modal.trigger name="webhook-endpoint">
-                        <flux:button variant="primary" icon="plus" wire:click="prepareCreateModal">Add endpoint</flux:button>
-                    </flux:modal.trigger>
+                    <flux:button variant="primary" icon="plus" wire:click="openCreateModal">
+                        {{ __('webhooks::page.add_endpoint') }}
+                    </flux:button>
                 </div>
             </div>
         </div>
+    @endunless
 
-        @if($endpoints->isEmpty())
-        {{-- Empty State --}}
-        <div class="text-center py-12 bg-white rounded-xl border border-gray-200">
+    @if($endpoints->isEmpty())
+        <div class="border-b border-gray-200 bg-white py-12 text-center">
             <flux:icon icon="bolt" class="mx-auto h-12 w-12 text-gray-300" />
-            <h3 class="mt-4 text-sm font-semibold text-gray-900">No endpoints</h3>
-            <p class="mt-1 text-sm text-gray-500">Get started by creating a new webhook endpoint.</p>
-            <div class="mt-6">
-                <flux:modal.trigger name="webhook-endpoint">
-                    <flux:button variant="primary" icon="plus" wire:click="prepareCreateModal">Add endpoint</flux:button>
-                </flux:modal.trigger>
-            </div>
+            <h3 class="mt-4 text-sm font-semibold text-gray-900">{{ __('webhooks::page.empty_title') }}</h3>
+            <p class="mt-1 text-sm text-gray-500">{{ __('webhooks::page.empty_description') }}</p>
         </div>
-        @endif
+    @endif
 
-        <div class="px-4">
-
-            {{-- Test Result Callout --}}
-            @if($lastTestResult)
+    <div class="px-4">
+        @if($lastTestResult)
             <div x-data="{ visible: true }" x-show="visible" x-transition>
                 <flux:callout variant="{{ $lastTestResult['variant'] }}" icon="{{ $lastTestResult['variant'] === 'success' ? 'check-circle' : 'x-circle' }}">
                     <flux:callout.heading>{{ $lastTestResult['heading'] }}</flux:callout.heading>
@@ -45,9 +40,9 @@
                     </x-slot>
                 </flux:callout>
             </div>
-            @endif
+        @endif
 
-            @if(!$endpoints->isEmpty())
+        @if(!$endpoints->isEmpty())
             <div class="overflow-x-auto">
                 <flux:table :paginate="$endpoints">
                     <flux:table.columns>
@@ -137,12 +132,10 @@
             <div class="px-4 pt-3 pb-3" aria-label="Table navigation">
                 {{ $endpoints->links() }}
             </div>
-            @endif
-        </div>
-
-        {{-- Create/Edit Modal --}}
-        <flux:modal name="webhook-endpoint" class="w-2xl max-w-full" @close="prepareCreateModal">
-            <livewire:webhook-endpoint-form />
-        </flux:modal>
+        @endif
     </div>
-</main>
+
+    <flux:modal name="webhook-endpoint" class="w-2xl max-w-full" @close="prepareCreateModal">
+        <livewire:pyle::webhook-endpoint-form />
+    </flux:modal>
+</div>
