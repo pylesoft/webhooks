@@ -70,7 +70,7 @@ it('displays empty state when no endpoints exist', function () {
 
     testLivewire(WebhooksPage::class)
         ->assertSee('No endpoints')
-        ->assertSee('Get started by creating a new webhook endpoint');
+        ->assertSee('Use the Add endpoint action to create your first webhook endpoint.');
 });
 
 it('displays existing endpoints', function () {

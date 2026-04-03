@@ -25,13 +25,13 @@ class WebhooksServiceProvider extends ServiceProvider
             config(['webhook-server' => array_replace_recursive($currentConfig, $overrides)]);
         }
 
-        // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'webhooks');
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'webhooks');
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'pyle-webhooks');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
-        // Register Livewire components
-        Livewire::component('pyle::webhooks', WebhooksPage::class);
-        Livewire::component('pyle::webhook-endpoint-form', WebhookEndpointForm::class);
+        Livewire::addLocation(
+            classNamespace: 'Pyle\\Webhooks\\Livewire',
+        );
 
         // Load routes if UI is enabled
         if (config('webhooks.ui.enabled', false)) {
@@ -62,6 +62,8 @@ class WebhooksServiceProvider extends ServiceProvider
         $this->app->singleton(PayloadBuilder::class);
         $this->app->singleton(WebhookDispatcher::class);
         $this->app->singleton(WebhookEndpointManager::class);
+
+        
 
         // Register the service the package provides.
         $this->app->singleton('webhooks', function ($app) {
