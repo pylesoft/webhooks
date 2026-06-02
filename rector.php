@@ -29,8 +29,8 @@ return RectorConfig::configure()
         FirstClassCallableRector::class,
         MakeModelAttributesAndScopesProtectedRector::class,
     ])
-    // Use PHP 8.2 (from composer.json)
-    ->withPhpSets(php82: true)
+    // Use PHP 8.4 (from composer.json)
+    ->withPhpSets(php84: true)
 
     // Skip some paths that might have complex legacy code
     ->withSkip([
