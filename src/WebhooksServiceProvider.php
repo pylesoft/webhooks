@@ -7,8 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 use Pyle\Webhooks\Console\Commands\MakeWebhookTransformerCommand;
 use Pyle\Webhooks\Listeners\DispatchWebhookListener;
-use Pyle\Webhooks\Livewire\WebhookEndpointForm;
-use Pyle\Webhooks\Livewire\WebhooksPage;
+use Spatie\WebhookServer\WebhookServerServiceProvider;
 
 class WebhooksServiceProvider extends ServiceProvider
 {
@@ -17,6 +16,14 @@ class WebhooksServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Publishing is only necessary when using the CLI.
+        if ($this->app->runningInConsole()) {
+            $this->bootForConsole();
+        }
+
+        if (!$this->packageIsEnabled()) {
+            return;
+        }
         // Apply webhook-server config overrides from our package config
         // This runs after all providers have registered, ensuring Spatie's config is loaded
         $overrides = config('webhooks.webhook_server', []);
@@ -40,11 +47,6 @@ class WebhooksServiceProvider extends ServiceProvider
 
         // Register event listeners for configured events
         $this->registerEventListeners();
-
-        // Publishing is only necessary when using the CLI.
-        if ($this->app->runningInConsole()) {
-            $this->bootForConsole();
-        }
     }
 
     /**
@@ -54,16 +56,18 @@ class WebhooksServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/webhooks.php', 'webhooks');
 
+        if (!$this->packageIsEnabled()) {
+            return;
+        }
+
         // Register Spatie's webhook-server provider
-        $this->app->register(\Spatie\WebhookServer\WebhookServerServiceProvider::class);
+        $this->app->register(WebhookServerServiceProvider::class);
 
         // Register services
         $this->app->singleton(EventCatalog::class);
         $this->app->singleton(PayloadBuilder::class);
         $this->app->singleton(WebhookDispatcher::class);
         $this->app->singleton(WebhookEndpointManager::class);
-
-        
 
         // Register the service the package provides.
         $this->app->singleton('webhooks', function ($app) {
@@ -114,5 +118,10 @@ class WebhooksServiceProvider extends ServiceProvider
         $this->commands([
             MakeWebhookTransformerCommand::class,
         ]);
+    }
+
+    private function packageIsEnabled(): bool
+    {
+        return (bool) config('webhooks.enabled', true);
     }
 }

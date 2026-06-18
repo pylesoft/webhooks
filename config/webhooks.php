@@ -8,6 +8,7 @@
  * }
  */
 return [
+    'enabled' => env('WEBHOOKS_ENABLED', true),
     /*
      * The secret key used for signing webhooks.
      * This is a fallback if per-endpoint secrets are not used.
