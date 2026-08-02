@@ -48,6 +48,7 @@ class WebhookEndpoint extends Model
      *
      * @return array<string, string>
      */
+    #[\Override]
     protected function casts(): array
     {
         return [
@@ -59,6 +60,7 @@ class WebhookEndpoint extends Model
     /**
      * Boot the model.
      */
+    #[\Override]
     protected static function boot(): void
     {
         parent::boot();

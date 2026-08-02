@@ -11,12 +11,9 @@ parameters:
     # Disable some strict checks to focus on native PHP types
     polluteScopeWithLoopInitialAssignments: false
     polluteScopeWithAlwaysIterableForeach: false
-    
+
     # Focus on native PHP types instead of PHPDoc
     treatPhpDocTypesAsCertain: false
-    
+
     # Memory limit for analysis
     tmpDir: build/phpstan
-    
-    # Exclude problematic files that reference App classes or have persistent issues
-    excludePaths:

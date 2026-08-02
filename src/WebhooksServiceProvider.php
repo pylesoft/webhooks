@@ -52,6 +52,7 @@ class WebhooksServiceProvider extends ServiceProvider
     /**
      * Register any package services.
      */
+    #[\Override]
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/webhooks.php', 'webhooks');
@@ -85,7 +86,7 @@ class WebhooksServiceProvider extends ServiceProvider
     {
         $events = config('webhooks.events', []);
 
-        foreach ($events as $eventKey => $config) {
+        foreach ($events as $config) {
             $eventClass = $config['event'] ?? null;
 
             if ($eventClass && class_exists($eventClass)) {
@@ -99,6 +100,7 @@ class WebhooksServiceProvider extends ServiceProvider
      *
      * @return array<int, string>
      */
+    #[\Override]
     public function provides(): array
     {
         return ['webhooks'];
