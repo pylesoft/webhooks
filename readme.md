@@ -331,7 +331,7 @@ Toggle "Enabled" in the UI, or: `WebhookEndpoint::query()->update(['enabled' => 
 
 ## Requirements
 
--   PHP 8.3+, Laravel 12, Livewire 3.4+, Flux UI
+-   PHP 8.4+, Laravel 13, Livewire 4.3+, Flux UI
 -   Queue worker for production
 
 ## Testing

@@ -4,7 +4,7 @@ namespace Pyle\Webhooks;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use Livewire\Livewire;
+use Livewire\LivewireManager;
 use Pyle\Webhooks\Console\Commands\MakeWebhookTransformerCommand;
 use Pyle\Webhooks\Listeners\DispatchWebhookListener;
 use Spatie\WebhookServer\WebhookServerServiceProvider;
@@ -36,7 +36,7 @@ class WebhooksServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'pyle-webhooks');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
-        Livewire::addLocation(
+        app(LivewireManager::class)->addLocation(
             classNamespace: 'Pyle\\Webhooks\\Livewire',
         );
 

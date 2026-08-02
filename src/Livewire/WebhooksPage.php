@@ -2,6 +2,7 @@
 
 namespace Pyle\Webhooks\Livewire;
 
+use Flux\FluxManager;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -35,20 +36,20 @@ class WebhooksPage extends Component
     public function openCreateModal(): void
     {
         $this->prepareCreateModal();
-        $this->modal('webhook-endpoint')->show();
+        app(FluxManager::class)->modal('webhook-endpoint')->show();
     }
 
     public function openEditModal(int $id): void
     {
         $this->dispatch('prepareEdit', id: $id)->to(WebhookEndpointForm::class);
-        $this->modal('webhook-endpoint')->show();
+        app(FluxManager::class)->modal('webhook-endpoint')->show();
     }
 
     #[On('endpoint-saved')]
     public function handleEndpointSaved(int $endpointId): void
     {
         $this->resetPage();
-        $this->modal('webhook-endpoint')->close();
+        app(FluxManager::class)->modal('webhook-endpoint')->close();
     }
 
     public function deleteEndpoint(int $id): void

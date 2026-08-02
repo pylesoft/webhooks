@@ -80,7 +80,7 @@ class WebhookEndpointManager
             'events' => $events,
         ]);
 
-        $endpoint = WebhookEndpoint::create([
+        $endpoint = WebhookEndpoint::query()->create([
             'url' => $validated['url'],
             'description' => $validated['description'] ?? null,
             'enabled' => $validated['enabled'],
@@ -106,7 +106,7 @@ class WebhookEndpointManager
         ?bool $enabled = null
     ): WebhookEndpoint {
         if (is_int($endpoint)) {
-            $endpoint = WebhookEndpoint::findOrFail($endpoint);
+            $endpoint = WebhookEndpoint::query()->findOrFail($endpoint);
         }
 
         $input = [];
@@ -173,7 +173,7 @@ class WebhookEndpointManager
     public function delete(WebhookEndpoint|int $endpoint): void
     {
         if (is_int($endpoint)) {
-            $endpoint = WebhookEndpoint::findOrFail($endpoint);
+            $endpoint = WebhookEndpoint::query()->findOrFail($endpoint);
         }
 
         $endpoint->subscriptions()->delete();
@@ -188,7 +188,7 @@ class WebhookEndpointManager
     public function test(WebhookEndpoint|int $endpoint): array
     {
         if (is_int($endpoint)) {
-            $endpoint = WebhookEndpoint::findOrFail($endpoint);
+            $endpoint = WebhookEndpoint::query()->findOrFail($endpoint);
         }
 
         try {
@@ -237,4 +237,3 @@ class WebhookEndpointManager
         }
     }
 }
-
