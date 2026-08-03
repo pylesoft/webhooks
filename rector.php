@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
 use Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector;
-use Rector\Php81\Rector\Array_\FirstClassCallableRector;
 use Rector\TypeDeclaration\Rector\ClassMethod\ReturnNeverTypeRector;
 use Rector\TypeDeclaration\Rector\Closure\AddClosureVoidReturnTypeWhereNoReturnRector;
 use RectorLaravel\Rector\ClassMethod\MakeModelAttributesAndScopesProtectedRector;
@@ -26,7 +25,6 @@ return RectorConfig::configure()
         AddClosureVoidReturnTypeWhereNoReturnRector::class,
         ClosureToArrowFunctionRector::class,
         ReturnNeverTypeRector::class,
-        FirstClassCallableRector::class,
         MakeModelAttributesAndScopesProtectedRector::class,
     ])
     // Use PHP 8.4 (from composer.json)

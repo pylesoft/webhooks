@@ -9,23 +9,24 @@
     ],
     "require": {
         "php": "^8.4",
-        "illuminate/contracts": "^12.0",
-        "livewire/livewire": "4.1.2",
-        "lorisleiva/laravel-actions": "^2.7",
-        "lorisleiva/lody": "^0.6.0",
+        "illuminate/contracts": "^13.0",
+        "livewire/flux": "^2.15",
+        "livewire/livewire": "^4.3",
+        "lorisleiva/laravel-actions": "^2.10.1",
+        "lorisleiva/lody": "^0.7",
         "spatie/laravel-webhook-server": "^3.8"
     },
     "require-dev": {
         "driftingly/rector-laravel": "2.0.7",
-        "larastan/larastan": "^3.6",
+        "larastan/larastan": "^3.10",
         "laravel/pint": "^1.23",
-        "nunomaduro/collision": "^8.1.1||^7.10.0",
+        "nunomaduro/collision": "^8.9.5",
         "nunomaduro/phpinsights": "^2.13",
-        "orchestra/testbench": "^10.0",
-        "pestphp/pest": "^3.0",
-        "pestphp/pest-plugin-arch": "^3.0",
-        "pestphp/pest-plugin-laravel": "^3.0",
-        "rector/rector": "2.2.2"
+        "orchestra/testbench": "^11.1",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-arch": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "rector/rector": "2.5.9"
     },
     "autoload": {
         "psr-4": {
@@ -40,7 +41,7 @@
         }
     },
     "scripts": {
-        "analyse": "vendor/bin/phpstan analyse",
+        "analyse": "php -d memory_limit=1G vendor/bin/phpstan analyse",
         "analyse-baseline": "vendor/bin/phpstan analyse --generate-baseline",
         "rector-dry": "vendor/bin/rector process --dry-run",
         "rector-fix": "vendor/bin/rector process",

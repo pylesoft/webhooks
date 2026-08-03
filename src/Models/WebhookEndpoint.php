@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 use Pyle\Webhooks\Database\Factories\WebhookEndpointFactory;
 
+/**
+ * @property bool $enabled
+ * @property string $secret
+ */
 class WebhookEndpoint extends Model
 {
     use HasFactory;
@@ -44,6 +48,7 @@ class WebhookEndpoint extends Model
      *
      * @return array<string, string>
      */
+    #[\Override]
     protected function casts(): array
     {
         return [
@@ -55,6 +60,7 @@ class WebhookEndpoint extends Model
     /**
      * Boot the model.
      */
+    #[\Override]
     protected static function boot(): void
     {
         parent::boot();

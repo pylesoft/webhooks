@@ -49,7 +49,7 @@ class EventCatalog
         }
 
         // Then, search config for matching event class
-        $eventClass = get_class($event);
+        $eventClass = $event::class;
 
         foreach ($this->all() as $key => $config) {
             if (($config['event'] ?? null) === $eventClass) {

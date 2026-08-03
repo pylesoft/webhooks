@@ -4,7 +4,7 @@ namespace Pyle\Webhooks;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use Livewire\Livewire;
+use Livewire\LivewireManager;
 use Pyle\Webhooks\Console\Commands\MakeWebhookTransformerCommand;
 use Pyle\Webhooks\Listeners\DispatchWebhookListener;
 use Spatie\WebhookServer\WebhookServerServiceProvider;
@@ -36,7 +36,7 @@ class WebhooksServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'pyle-webhooks');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
-        Livewire::addLocation(
+        app(LivewireManager::class)->addLocation(
             classNamespace: 'Pyle\\Webhooks\\Livewire',
         );
 
@@ -52,6 +52,7 @@ class WebhooksServiceProvider extends ServiceProvider
     /**
      * Register any package services.
      */
+    #[\Override]
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/webhooks.php', 'webhooks');
@@ -85,7 +86,7 @@ class WebhooksServiceProvider extends ServiceProvider
     {
         $events = config('webhooks.events', []);
 
-        foreach ($events as $eventKey => $config) {
+        foreach ($events as $config) {
             $eventClass = $config['event'] ?? null;
 
             if ($eventClass && class_exists($eventClass)) {
@@ -99,6 +100,7 @@ class WebhooksServiceProvider extends ServiceProvider
      *
      * @return array<int, string>
      */
+    #[\Override]
     public function provides(): array
     {
         return ['webhooks'];

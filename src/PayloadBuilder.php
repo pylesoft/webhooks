@@ -4,14 +4,14 @@ namespace Pyle\Webhooks;
 
 use DateTimeInterface;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Str;
 use Pyle\Webhooks\Contracts\WebhookPayloadTransformer;
 
 class PayloadBuilder
 {
     public function __construct(
         protected EventCatalog $catalog
-    ) {
-    }
+    ) {}
 
     /**
      * Build the webhook payload envelope from an event.
@@ -71,7 +71,7 @@ class PayloadBuilder
         if (empty($properties)) {
             return [
                 'event' => [
-                    'class' => get_class($event),
+                    'class' => $event::class,
                 ],
             ];
         }
@@ -127,7 +127,7 @@ class PayloadBuilder
 
         // Unknown objects -> minimal representation
         return [
-            'class' => get_class($value),
+            'class' => $value::class,
         ];
     }
 
@@ -141,7 +141,7 @@ class PayloadBuilder
     protected function wrapInEnvelope(string $eventKey, array $data, array $meta): array
     {
         return [
-            'id' => (string) \Illuminate\Support\Str::uuid(),
+            'id' => (string) Str::uuid(),
             'event_key' => $eventKey,
             'occurred_at' => now()->toIso8601String(),
             'data' => $data,
@@ -152,4 +152,3 @@ class PayloadBuilder
         ];
     }
 }
-
